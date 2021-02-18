@@ -1,6 +1,6 @@
 /**
  * @author 김병준
- * @version 1.0.0
+ * @version 1.0.2
  */
 
 var kbj = function(){ 
@@ -159,17 +159,23 @@ kbj.prototype = {
     /**
      * 태그에 있는 attr의 param을 딕션너리로 파싱해준다
      * ex) <div test="test">  => {test : "test"} 
-     * @params 셀렉터 리스트 ※반드시 셀렉터를 리스트에 담아서 보낼것
+     * @params 셀렉터 
      * @params 태그 attr 이름
      * @return list
      * 
      * @author 김병준
-     * @version 1.0.0
+     * @version 1.0.2
      * @since 1.0.0
      * @fix 2021-02-18
      */
     ,parseTagParams : function($selectorList, tagName,onComplete){
         var resultList = []
+        var $List = $selectorList;
+
+        if(Array.isArray($selectorList) === false){
+            $List = [];
+            $List.push($selectorList);
+        }
 
         for(var index in $selectorList){
             var resultObj = {};
