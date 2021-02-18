@@ -1,3 +1,8 @@
+/**
+ * @author 김병준
+ * @version 1.0.0
+ */
+
 var kbj = function(){ 
     if(!new.target){//new 를 사용하여 호출했는지 체크 && 안했다면 new로 생성시켜준다. => 유연한 코드 작성이 가능
         return new kbj();
@@ -18,8 +23,10 @@ kbj.prototype = {
     }
     
     /**
-     * bj-nullToBlanc 속성을 가진 테이블의 모든 td(리스트) 가져온다
+     * bj-nullHandler 속성을 가진 테이블의 모든 td(리스트) 가져온다
      * @author 김병준
+     * @version 1.0.0
+     * @fix 2021-02-18
      */
     ,getNullTableData : function(onComplete){
         var _this = this;
@@ -32,7 +39,7 @@ kbj.prototype = {
             $nullToBlancList.push($nullHandler[i]);
         }
 
-        _this.parseTagParams($nullToBlancList, function(results){
+        _this.parseTagParams($nullToBlancList, "bj-nullHandler",function(results){
             for(var index in results){
                 $nullToBlanc = $($("table[bj-nullHandler]")[results[index].tableIndex]);
                 var $td = $nullToBlanc.find("td");
@@ -47,15 +54,16 @@ kbj.prototype = {
     }
 
     /**
-     * bj-nullToBlanc 속성의 td 태그들은 가공한다.
+     * bj-nullHandler 속성의 td 태그들은 가공한다.
      * @author 김병준
+     * @version 1.0.0
+     * @fix 2021-02-18
      */
     ,changeNullTableData : function(){
         var _this = this;
 
         _this.getNullTableData(function($td , $nullToBlanc, replaceChar){
             var len = $td.length;
-            //var nullHandler_props =  $($nullToBlanc[paramList[index].tableIndex]).attr("bj-nullHandler");
             
             for(var i=0; i<len ;i++){
                 if($($td[i]).text() === null || $($td[i]).text() == "null" || $($td[i]).text().indexOf("null") > -1){
@@ -80,6 +88,9 @@ kbj.prototype = {
     /**
      * "null 시간" 같이 null이 포함된 문자열일때 null만 삭제시켜줌 
      * null 여러개일 경우 정규식표현으로 수정해줄 것
+     * @author 김병준
+     * @version 1.0.0
+     * @fix 2021-02-18
      */
     ,sliceOnlyNull : function(nullString){
         nullString = nullString.trim();
@@ -90,6 +101,8 @@ kbj.prototype = {
      * promise 버전
      * bj-nullToBlanc 속성을 가진 테이블의 모든 td(리스트) 가져온다
      * @author 김병준
+     * @version 1.0.0
+     * @fix 2021-02-18
      */
     ,getAsyncNullTableData : function(){
         var $nullToBlanc = $("table[bj-nullHandler]");
@@ -112,6 +125,8 @@ kbj.prototype = {
      * promise 버전
      * bj-nullToBlanc 속성의 td 태그들은 가공한다.
      * @author 김병준
+     * @version 1.0.0
+     * @fix 2021-02-18
      */
     ,changeAsyncNullTableData : async function(){
         try {
@@ -140,12 +155,25 @@ kbj.prototype = {
         }
         console.log("ES6 _this.changeAsyncNullTableData 메서드 종료");
     }
-    ,parseTagParams : function($nullToBlancList,onComplete){
+
+    /**
+     * 태그에 있는 attr의 param을 딕션너리로 파싱해준다
+     * ex) <div test="test">  => {test : "test"} 
+     * @params 셀렉터 리스트 ※반드시 셀렉터를 리스트에 담아서 보낼것
+     * @params 태그 attr 이름
+     * @return list
+     * 
+     * @author 김병준
+     * @version 1.0.0
+     * @since 1.0.0
+     * @fix 2021-02-18
+     */
+    ,parseTagParams : function($selectorList, tagName,onComplete){
         var resultList = []
 
-        for(var index in $nullToBlancList){
-            var resultObj = {}
-            var tagParams = $($nullToBlancList[index]).attr("bj-nullHandler");
+        for(var index in $selectorList){
+            var resultObj = {};
+            var tagParams = $($selectorList[index]).attr(tagName);
 
             tagParams = tagParams.replace("{","");
             tagParams = tagParams.replace("}","");
@@ -161,26 +189,10 @@ kbj.prototype = {
         if(onComplete){
             onComplete(resultList);
         }
+
+        return resultList;
     }
-    /**
-     * 
-     */
-    // ,parseTagParams : function(tagParams,onComplete){
-    //     var resultObj = {}
-    //     tagParams = tagParams.replace("{","");
-    //     tagParams = tagParams.replace("}","");
-    //     var paramList = tagParams.split(",");
-    //     var paramListLen = paramList.length;
 
-    //     for(var m = 0; m<paramListLen; m++){
-    //         tempList = paramList[m].split(":");
-    //         resultObj[tempList[0].trim()] = tempList[1].trim();
-    //     }
-
-    //     if(onComplete){
-    //         onComplete(resultObj);
-    //     }
-    // }
     ,removeEvnet : function(){
         var _this = this;
     }
