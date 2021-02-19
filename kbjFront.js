@@ -1,19 +1,20 @@
 /**
- * @author 김병준
- * @version 1.0.2
+ * @author 김병준 2021-02-18
+ * @version 1.0.3
  */
 
-var kbj = function(){ 
+var kbjFront = function(){ 
     if(!new.target){//new 를 사용하여 호출했는지 체크 && 안했다면 new로 생성시켜준다. => 유연한 코드 작성이 가능
-        return new kbj();
+        return new kbjFront();
     }   
     this.init();
 }
 
-kbj.prototype = {
+kbjFront.prototype = {
     init : function(){
         var _this = this;
-
+        kbjUtil.prototype.init();
+        
        _this.changeNullTableData(); //ECMA5 콜백 버전
        //_this.changeAsyncNullTableData(); //ECMA6 Promise 버전
     }
@@ -39,13 +40,13 @@ kbj.prototype = {
             $nullToBlancList.push($nullHandler[i]);
         }
 
-        _this.parseTagParams($nullToBlancList, "bj-nullHandler",function(results){
+        kbjUtil.prototype.parseTagParams($nullToBlancList, "bj-nullHandler",function(results){
             for(var index in results){
                 $nullToBlanc = $($("table[bj-nullHandler]")[results[index].tableIndex]);
                 var $td = $nullToBlanc.find("td");
                 
                 if(onComplete){
-                    onComplete($td, $nullToBlanc, results[index].replaceChar);
+                    onComplete($td, results[index].replaceChar);
                 }
             }
         });
@@ -62,7 +63,7 @@ kbj.prototype = {
     ,changeNullTableData : function(){
         var _this = this;
 
-        _this.getNullTableData(function($td , $nullToBlanc, replaceChar){
+        _this.getNullTableData(function($td , replaceChar){
             var len = $td.length;
             
             for(var i=0; i<len ;i++){
@@ -167,6 +168,8 @@ kbj.prototype = {
      * @version 1.0.2
      * @since 1.0.0
      * @fix 2021-02-18
+     * 
+     * kbjUtil.js 로 옮김 , kbjFront.js에서는 사용 안함
      */
     ,parseTagParams : function($selectorList, tagName,onComplete){
         var resultList = []
@@ -212,7 +215,9 @@ kbj.prototype = {
 $(function(){
     // var onKbj = {}
     // onKbj.table = new kbj();
-    new kbj();
+    //var kbjUtil = new kbjUtil();
+    new kbjUtil();
+    new kbjFront();
 });
 
 
